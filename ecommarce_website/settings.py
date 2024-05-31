@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,14 +39,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'auth_app',
-    'jazzmin',
     'home',
-    'accunts',
+]
+JAZZMIN_SETTINGS = {
+    'site_title': 'My Admin',
+    'site_header': 'My Administration',
+    'welcome_sign': 'Welcome to the Admin Area',
+    # Other configurations
+}
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+
+
+AUTHENTICATION_BACKENDs = [
+    'django.countrib.auth.backends.ModelBackend'
 ]
 
-# AUTHENTICATION_BACKENDs = [
-#     'django.countrib.auth.backends.ModelBackend'
-# ]
+# AUTH_USER_MODEL = 'accunts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -55,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'ecommarce_website.urls'
@@ -138,3 +150,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BackEND = 'django.care.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'sifatali360@gmail.com'
+EMAIL_HOST_PASSWORD = 'huhe rrbm klcz nfdv'
