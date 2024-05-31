@@ -1,4 +1,3 @@
-# app/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -6,7 +5,10 @@ from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from django.core.mail import send_mail
 from django.utils import timezone
 from .models import Profile
+from .middlewares import verified_user
 
+
+@verified_user
 def login_register_view(request):
     if request.method == 'POST':
         if 'login' in request.POST:
@@ -18,12 +20,12 @@ def login_register_view(request):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
-                    messages.success(request, f"You are now logged in as {username}.")
+                    log_message=messages.success(request, f"You are now logged in as {username}.")
                     return redirect('home')
                 else:
-                    messages.error(request, "Invalid username or password.")
+                    log_message=messages.error(request, "Invalid username or password.")
             else:
-                messages.error(request, "Invalid login details.")
+                log_message=messages.error(request, "Invalid login details.")
         elif 'register' in request.POST:
             register_form = CustomUserCreationForm(request.POST)
             login_form = CustomAuthenticationForm()
@@ -42,17 +44,18 @@ def login_register_view(request):
                     [user.email],
                     fail_silently=False,
                 )
-                messages.success(request, "An email has been sent to your address. Please verify your email to complete the registration.")
+                reg_message=messages.success(request, "An email has been sent to your address. Please verify your email to complete the registration.")
                 
                 # messages.success(request, "Registration successful.")
                 return redirect('login_registration')
             else:
-                messages.error(request, "Unsuccessful registration. Invalid information.")
+                reg_message=messages.error(request, "Unsuccessful registration. Invalid information.")
     else:
         login_form = CustomAuthenticationForm()
         register_form = CustomUserCreationForm()
-
-    return render(request, 'login_registration.html', {'login_form': login_form, 'register_form': register_form,'preloader':True})
+    preloader=True
+   # return render(request, 'login_registration.html', {'login_form': login_form, 'register_form': register_form,'preloader':True,'log_message':log_message})
+    return render(request, 'login_registration.html', locals())
 
 def verify(request, otp):
     profile = get_object_or_404(Profile, otp=otp)
@@ -61,8 +64,19 @@ def verify(request, otp):
         profile.user.is_active = True
         profile.user.save()
         profile.save()
-        messages.success(request, "Your account has been verified. You can now log in.")
+        reg_message=messages.success(request, "Your account has been verified. You can now log in.")
         return redirect('/')
     else:
-        messages.error(request, "Verification link is not valid or has expired.")
+        reg_message=messages.error(request, "Verification link is not valid or has expired.")
         return redirect('login_registration')
+    
+    
+# def check_login_status(request):
+#     if request.user.is_authenticated:
+#         log_reg = request.user.username
+#     else:
+#         log_reg = 'Log In / Sign Up'
+        
+#     print("sifat ali")
+    
+#     return render(request, 'home.html', {'log_reg': log_reg})

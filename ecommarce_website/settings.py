@@ -45,7 +45,7 @@ JAZZMIN_SETTINGS = {
     'site_title': 'My Admin',
     'site_header': 'My Administration',
     'welcome_sign': 'Welcome to the Admin Area',
-    # Other configurations
+   
 }
 
 LOGIN_REDIRECT_URL = 'home'
