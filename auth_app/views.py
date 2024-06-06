@@ -1,82 +1,205 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate, logout
+from django.shortcuts import render, redirect
+from django.contrib.auth import login,authenticate, get_user_model, update_session_auth_hash
 from django.contrib import messages
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.utils import timezone
-from .models import Profile
-from .middlewares import verified_user
+from .models import profile, forget_otp
+from .middlewares import verified_user, auth
+import random, re
+from django.conf import settings
+from django.utils.html import escape
 
 
 @verified_user
 def login_register_view(request):
     if request.method == 'POST':
-        if 'login' in request.POST:
-            login_form = CustomAuthenticationForm(request, data=request.POST)
-            register_form = CustomUserCreationForm()
-            if login_form.is_valid():
-                username = login_form.cleaned_data.get('username')
-                password = login_form.cleaned_data.get('password')
-                user = authenticate(request, username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    log_message=messages.success(request, f"You are now logged in as {username}.")
-                    return redirect('home')
-                else:
-                    log_message=messages.error(request, "Invalid username or password.")
-            else:
-                log_message=messages.error(request, "Invalid login details.")
-        elif 'register' in request.POST:
-            register_form = CustomUserCreationForm(request.POST)
-            login_form = CustomAuthenticationForm()
-            if register_form.is_valid():
-                user = register_form.save(commit=False)
-                user.is_active = False
-                user.save()
-                profile = Profile.objects.create(user=user)
-
-                profile.generate_otp()
-                
-                send_mail(
-                    'Your OTP Code',
-                    f'Click the link to verify your account: http://127.0.0.1:8000/auth/verify/{profile.otp}',
-                    'from@example.com',
-                    [user.email],
-                    fail_silently=False,
-                )
-                reg_message=messages.success(request, "An email has been sent to your address. Please verify your email to complete the registration.")
-                
-                # messages.success(request, "Registration successful.")
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        if password == confirm_password:
+            is_strong = False
+            if re.search(r"[A-Z]+[a-z]+[0-9]+[!@#$%^&*(),/'.?:{}|<>]",password) and len(password) >7:
+                is_strong = True
+            if is_strong == False:
+                messages.warning(request, 'Your password is weak.. ')
                 return redirect('login_registration')
             else:
-                reg_message=messages.error(request, "Unsuccessful registration. Invalid information.")
-    else:
-        login_form = CustomAuthenticationForm()
-        register_form = CustomUserCreationForm()
-    preloader=True
-   # return render(request, 'login_registration.html', {'login_form': login_form, 'register_form': register_form,'preloader':True,'log_message':log_message})
+            
+                if User.objects.filter(username =username).exists():
+                    messages.warning(request, 'username  already exists')
+                    return redirect('login_registration')
+                elif User.objects.filter(email =email).exists():
+                    messages.warning(request, 'email  already exists')
+                    return redirect('login_registration')
+                else:
+                    user = User.objects.create_user(username=username, email=email, password=password)
+                    user.set_password(password)
+                    user.save()
+                    #for send otp
+                    prof = profile.objects.create(user=user)
+                    prof.generate_otp()
+                    prof.save()
+                    
+                    html_message = f"""
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <style>
+                                    .button {{
+                                        display: inline-block;
+                                        padding: 10px 20px;
+                                        font-size: 16px;
+                                        cursor: pointer;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        outline: none;
+                                        color: #fff;
+                                        background-color: #4CAF50;
+                                        border: none;
+                                        border-radius: 15px;
+                                        box-shadow: 0 9px #999;
+                                    }}
+
+                                    .button:hover {{background-color: #3e8e41}}
+
+                                    .button:active {{
+                                        background-color: #3e8e41;
+                                        box-shadow: 0 5px #666;
+                                        transform: translateY(4px);
+                                    }}
+                                </style>
+                            </head>
+                            <body>
+                                <p>Click the button below to verify your account:</p>
+                                <a href="http://127.0.0.1:8000/auth/verify/{escape(prof.otp)}" class="button">Verify Account</a>
+                            </body>
+                            </html>
+                            """
+                    send_mail(
+                        'Your OTP Code',
+                        f'Click the link to verify your account: http://127.0.0.1:8000/auth/verify/{prof.otp}',
+                        'from@example.com',
+                        [user.email],
+                        fail_silently=False,
+                        html_message = html_message,
+                    )
+                    messages.success(request, "An email has been sent to your address. Please verify your email to complete the registration.")
+        else:
+            messages.warning(request, 'password and confirm password does not match')
+   
+    if request.method == 'GET':
+        username = request.GET.get('username_l')
+        password = request.GET.get('password_l')
+        user = authenticate(username=username, password=password)                                                                                                                                                                                                       
+        if user:
+            login(request, user)
+            return redirect('home')          
     return render(request, 'login_registration.html', locals())
 
 def verify(request, otp):
-    profile = get_object_or_404(Profile, otp=otp)
-    if profile and profile.otp_is_valid():
-        profile.is_verified = True
-        profile.user.is_active = True
-        profile.user.save()
-        profile.save()
-        reg_message=messages.success(request, "Your account has been verified. You can now log in.")
-        return redirect('/')
+    prof = profile.objects.get(otp=otp)
+    if prof:
+        prof.is_verified = True
+        prof.save()
+        messages.success(request, "Your account has been verified. You can now log in.")
     else:
-        reg_message=messages.error(request, "Verification link is not valid or has expired.")
-        return redirect('login_registration')
+        messages.error(request, "Verification link is not valid or has expired.")
+    return redirect('login_registration')
+
     
+@auth
+def details_update(request,id):
+    data=User.objects.get(id=id)
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        display_name = request.POST.get('dname')
+        number = request.POST.get('number')
+        data.first_name=first_name
+        data.last_name=last_name
+        data.display_name=display_name
+        data.number=number
+        data.save()
+        return redirect('account')
+    else:
+        print('id not match')
     
-# def check_login_status(request):
-#     if request.user.is_authenticated:
-#         log_reg = request.user.username
-#     else:
-#         log_reg = 'Log In / Sign Up'
+    return render(request, 'profile.html',locals())
+
+@verified_user
+def email_verifiation(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if not User.objects.filter(email=email).exists():
+            messages.error(request, 'Your search did not return any results. Please try again with other information.')
+        else:
+            generate_otp = random.randint(100000, 999999)
+            forget_otp.objects.create(otp = generate_otp, email = email)
+            subject = 'Your OTP Code'
+            massage =f'Your OTP code is {generate_otp}. It is valid for 10 minutes.'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [email]
+            send_mail(subject, massage, email_from, recipient_list)
+            return redirect('new_password')
+           
+    return render (request, 'email_verifiation.html')
+
+@verified_user
+def new_password(request):
+    if request.method == 'POST':
+        otp = request.POST.get('otp')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        user1 = forget_otp.objects.get(otp=otp)
+        email = user1.email
+        if forget_otp.objects.filter(otp = otp).exists():
+            if password1 == password2:
+                user2 = User.objects.get(email = email)
+                username = user2.username
+                user = get_user_model().objects.get(username=username)
+                user.set_password(password1)
+                user.save()
+                user1.delete()
+                return redirect('password_change_done')
+            else:
+                messages.error(request, 'New Password and confirm Confirm Password does not match.')
+        else:
+            messages.error(request,'otp', 'Invalid OTP')
+    
+    return render(request, 'change_pass.html',{'messages':messages})
         
-#     print("sifat ali")
-    
-#     return render(request, 'home.html', {'log_reg': log_reg})
+def password_change_done(request):
+    return render(request , 'password_change_done.html',)
+        
+        
+@auth     
+def reset_password(request):
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            username = request.user.username
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_new_password = request.POST.get('confirm_new_password')
+        if new_password == confirm_new_password:
+            user = get_user_model().objects.get(username=username)
+            
+            if user.check_password(old_password):
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)
+                send_mail(
+                        'Password Change Successful',
+                         'Hello {},\n\nYour password has been successfully changed.'.format(user.username),
+                        'from@example.com',
+                        [user.email],
+                        
+                    )
+                messages.success(request, 'Your password was successfully updated!')
+                return redirect('account')
+            else:
+                messages.warning(request, 'Old password is incorrect.')
+        else:
+            messages.warning(request, 'New Password and confirm Confirm Password does not match.')
+                
+    return render(request, 'profile.html')

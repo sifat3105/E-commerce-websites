@@ -4,40 +4,36 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from . import globals
+from auth_app.models import profile
 
 User = get_user_model()
 
 
 
 #****************** Create your views here**********************
-def initialize_global_variables(request):
-    if request.user.is_authenticated:
-        globals.log_reg = request.user.username
-        globals.username = request.user.username
-        globals.log_reg_link = reverse('profile')
-    else:
-        globals.log_reg = 'Log In / Sign Up'
-        globals.log_reg_link = reverse('login_registration')
-
-
 @auth
 def home_view(request):
-    log_reg = globals.log_reg
-    username = globals.username
-    log_reg_link = globals.log_reg_link
-   
+    if request.user.is_authenticated:
+        log_reg = request.user.username
+        log_reg_link = reverse('account')
+    else:
+        log_reg = 'Log In / Sign Up'
+        log_reg_link = reverse('login_registration')
         
     return render(request, 'home.html',{'log_reg':log_reg, 'log_reg_link':log_reg_link})
 
 def logout_view(request):
     logout(request)
     return redirect('login_registration')
-
-def profile(request):
-    log_reg = globals.log_reg
-    username = globals.username
-    log_reg_link = globals.log_reg_link
-    print(username)
-
-    return render(request, 'profile.html', {'log_reg':log_reg, 'username':username, 'log_reg_link':log_reg_link, 'preloader':True})
+@auth
+def account(request):
+    profile.objects.all()
+    username = None
+    if request.user.is_authenticated:
+        log_reg = request.user.username
+        log_reg_link = reverse('account')
+        username = request.user.username
+    else:
+        log_reg = 'Log In / Sign Up'
+        log_reg_link = reverse('login_registration')
+    return render(request, 'profile.html',{'username':username, 'log_reg':log_reg, 'log_reg_link':log_reg_link,'Profile':profile})

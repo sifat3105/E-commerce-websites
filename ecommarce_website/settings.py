@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'ecommarce_website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'e-commarce_website',
+        'NAME': 'commarce_website',
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': '127.0.0.1',
