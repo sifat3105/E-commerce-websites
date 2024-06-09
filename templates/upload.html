@@ -1,0 +1,15 @@
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="image">
+    <button type="submit">Upload and Convert</button>
+</form>
+
+{% if uploaded_file_url %}
+    <p>Original file uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+    <img src="{{ uploaded_file_url }}" alt="Original Image">
+{% endif %}
+
+{% if converted_file_url %}
+    <p>Converted file available at: <a href="{{ converted_file_url }}">{{ converted_file_url }}</a></p>
+    <img src="{{ converted_file_url }}" alt="Converted Image">
+{% endif %}

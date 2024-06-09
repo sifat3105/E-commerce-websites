@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from .models import profile, forget_otp
-from .middlewares import verified_user, auth
+from .middlewares import verified_user, not_verified_user
 import random, re
 from django.conf import settings
 from django.utils.html import escape
@@ -108,9 +108,10 @@ def verify(request, otp):
     return redirect('login_registration')
 
     
-@auth
+@not_verified_user
 def details_update(request,id):
     data=User.objects.get(id=id)
+    prof =profile.objects.get(user_id = id) 
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -118,12 +119,14 @@ def details_update(request,id):
         number = request.POST.get('number')
         data.first_name=first_name
         data.last_name=last_name
-        data.display_name=display_name
-        data.number=number
         data.save()
+        prof.display_name=display_name
+        prof.phone_number=number
+        prof.save()
+        messages.success(request, f'{first_name} Your Account Details update successful.. ')
         return redirect('account')
     else:
-        print('id not match')
+        messages.warning(request, 'Your data is not valid..')
     
     return render(request, 'profile.html',locals())
 
@@ -168,12 +171,12 @@ def new_password(request):
             messages.error(request,'otp', 'Invalid OTP')
     
     return render(request, 'change_pass.html',{'messages':messages})
-        
+      
 def password_change_done(request):
     return render(request , 'password_change_done.html',)
         
-        
-@auth     
+@verified_user        
+@not_verified_user     
 def reset_password(request):
     if request.method == 'POST':
         if request.user.is_authenticated:

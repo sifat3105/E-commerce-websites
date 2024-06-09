@@ -14,7 +14,9 @@ class profile(models.Model):
     otp = models.CharField(max_length=6, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     otp_created_at = models.DateTimeField(auto_now_add=True)
-
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    display_name = models.CharField(max_length=15, blank=True, null=True)
+    
     def generate_otp(self):
         self.otp = ''.join(random.choices(string.digits, k=6))
         self.otp_created_at = timezone.now()
@@ -36,3 +38,5 @@ class forget_otp(models.Model):
     
     def otp_is_valid(self):
         return self.otp_created_at + timedelta(minutes=10) > timezone.now()
+    
+    
