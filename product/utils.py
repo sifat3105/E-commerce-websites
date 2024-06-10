@@ -8,7 +8,7 @@ def convert_to_16_9(image_file):
         original_width, original_height = img.size
         
         # Desired aspect ratio
-        target_aspect_ratio = 16 / 9
+        target_aspect_ratio = 10 / 9
         
         # Calculate new dimensions
         original_aspect_ratio = original_width / original_height
@@ -38,7 +38,7 @@ def convert_to_16_9(image_file):
         converted_image_file = InMemoryUploadedFile(
             img_io,
             None,
-            f"converted_{image_file.name}",
+            f"product_{image_file.name}",
             'image/jpeg',
             img_io.tell(),
             None
