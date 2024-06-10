@@ -175,7 +175,6 @@ def new_password(request):
 def password_change_done(request):
     return render(request , 'password_change_done.html',)
         
-@verified_user        
 @not_verified_user     
 def reset_password(request):
     if request.method == 'POST':
