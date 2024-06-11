@@ -58,7 +58,12 @@
                                         </div>
                                         {% endif %}
                                         <div class="card-header">
+                                            {% if first_name %}
+                                            <h5 class="mb-0">Hello {{ first_name }} </h5>
+                                            {% else %}
                                             <h5 class="mb-0">Hello {{ username }} </h5>
+                                            {% endif %}
+                                            
                                         </div>
                                         
                                         <div class="card-body">

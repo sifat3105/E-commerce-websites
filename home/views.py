@@ -5,40 +5,27 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from auth_app.models import profile
+# from product.models import*
 
 User = get_user_model()
 
 
 
 #****************** Create your views here**********************
-@not_verified_user
-def home_view(request):
-    if request.user.is_authenticated:
-        if request.user.username == 'admin':
-            return redirect('logout')
-        log_reg = request.user.username
-        log_reg_link = reverse('account')
-    else:
-        log_reg = 'Log In / Sign Up'
-        log_reg_link = reverse('login_registration')
-        
-    return render(request, 'home.html',{'log_reg':log_reg, 'log_reg_link':log_reg_link})
 
+def home_view(request):
+    
+    return render(request, 'home.html')
+
+
+@not_verified_user
 def logout_view(request):
     logout(request)
     return redirect('login_registration')
+
+
 @not_verified_user
 def account(request):
-    if request.user.is_authenticated:
-        if request.user.username == 'admin':
-            return redirect('logout')
     profile.objects.all()
-    username = None
-    if request.user.is_authenticated:
-        log_reg = request.user.username
-        log_reg_link = reverse('account')
-        username = request.user.username
-    else:
-        log_reg = 'Log In / Sign Up'
-        log_reg_link = reverse('login_registration')
-    return render(request, 'profile.html',{'username':username, 'log_reg':log_reg, 'log_reg_link':log_reg_link,'Profile':profile})
+   
+    return render(request, 'profile.html',{'Profile':profile})

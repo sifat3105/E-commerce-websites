@@ -1,10 +1,9 @@
 from django.urls import path
-from .views import create_product, product_view, upload_and_convert_image
-
+from .views import create_product, product_view, right_product_view
 urlpatterns = [
     path('create_product/', create_product, name='create_product'),
     path('', product_view, name='product_view'),
-    path('upload/', upload_and_convert_image, name='upload_and_convert_image'),
+    path('right_product_view/<str:uuid>', right_product_view, name='right_product_view'),
 ]
 
 from django.conf import settings
