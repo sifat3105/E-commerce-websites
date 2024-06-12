@@ -151,8 +151,54 @@
                                                 <div class="card-body">
                                                     <address>3522 Interstate<br> 75 Business Spur,<br> Sault Ste. <br>Marie, MI 49783</address>
                                                     <p>New York</p>
-                                                    <a href="#" class="btn-small">Edit</a>
+                                                    <a href="#" class="btn-small" data-bs-toggle="modal" data-bs-target="#editBillingModal">Edit</a>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal fade" id="editBillingModal" tabindex="-1" aria-labelledby="editBillingModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog d-flex align-items-center" style="min-height: 90vh;">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editBillingModalLabel">Edit Billing Address</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="post" name="shippingForm" action="{% url 'billing_update' %}">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="form-group col-md-12">
+                                                                    <label>Street Address <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="street_address" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>City <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="city" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>State <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="state" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>ZIP Code <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="zip_code" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>Country <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="country" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-12">
+                                                                    <label>Phone Number <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="phone" type="text">
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -164,8 +210,54 @@
                                                     <address>4299 Express Lane<br>
                                                         Sarasota, <br>FL 34249 USA <br>Phone: 1.941.227.4444</address>
                                                     <p>Sarasota</p>
-                                                    <a href="#" class="btn-small">Edit</a>
+                                                    <a href="#" class="btn-small" data-bs-toggle="modal" data-bs-target="#editShippingModal">Edit</a>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal fade" id="editShippingModal" tabindex="-1" aria-labelledby="editShippingModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog d-flex align-items-center" style="min-height: 90vh;">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editShippingModalLabel">Edit Shipping Address Address</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="post" name="shippingForm" action="{% url 'shipping_update' %}">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="form-group col-md-12">
+                                                                    <label>Street Address <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="street_address" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>City <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="city" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>State <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="state" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>ZIP Code <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="zip_code" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-6">
+                                                                    <label>Country <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="country" type="text">
+                                                                </div>
+                                                                <div class="form-group col-md-12">
+                                                                    <label>Phone Number <span class="required">*</span></label>
+                                                                    <input required class="form-control square" name="phone" type="text">
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <button type="submit" class="btn btn-fill-out submit" name="submit" value="Submit">Save</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             </div>
                                         </div>
                                     </div>

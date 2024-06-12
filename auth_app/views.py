@@ -41,7 +41,10 @@ def is_strong_password(password):
 
 @verified_user
 def login_register_view(request):
+    log_status = False
+    reg_status = False
     if request.method == 'POST':
+        reg_status = True
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -114,12 +117,16 @@ def login_register_view(request):
             messages.warning(request, 'password and confirm password does not match')
    
     if request.method == 'GET':
+        # log_status = True
         username = request.GET.get('username_l')
         password = request.GET.get('password_l')
         user = authenticate(username=username, password=password)                                                                                                                                                                                                       
         if user:
             login(request, user)
-            return redirect('home')          
+            return redirect('home')    
+        else:
+            log_status = True
+            messages.warning(request, ' invalid password')      
     return render(request, 'login_registration.html', locals())
 
 def verify(request, otp):
