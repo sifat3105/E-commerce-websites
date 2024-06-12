@@ -11,7 +11,32 @@ from django.utils.html import escape
 
 
 
+#____________________chacking password_____________
+def is_strong_password(password):
+    if len(password) <= 7:
+        return False
 
+    has_upper = False
+    has_lower = False
+    has_digit = False
+    has_special = False
+
+    special_characters = set("!@#$%^&*(),/'.?:{}|<>")
+
+    for char in password:
+        if char.isupper():
+            has_upper = True
+        elif char.islower():
+            has_lower = True
+        elif char.isdigit():
+            has_digit = True
+        elif char in special_characters:
+            has_special = True
+
+        if has_upper and has_lower and has_digit and has_special:
+            return True
+
+    return False
 
 
 @verified_user
@@ -22,12 +47,8 @@ def login_register_view(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         if password == confirm_password:
-            is_strong = False
-            if re.search(r"[A-Z]+[a-z]+[0-9]+[!@#$%^&*(),/'.?:{}|<>]",password) and len(password) >7:
-                is_strong = True
-            if is_strong == False:
-                messages.warning(request, 'Your password is weak.. ')
-                return redirect('login_registration')
+            if not is_strong_password(password):
+                messages.warning(request, 'Your password is weak')
             else:
             
                 if User.objects.filter(username =username).exists():
