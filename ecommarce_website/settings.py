@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'auth_app',
     'home',
     'product',
+    'video_views',
+    
 ]
 JAZZMIN_SETTINGS = {
     'site_title': 'My Admin',
