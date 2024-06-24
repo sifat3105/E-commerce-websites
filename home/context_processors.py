@@ -1,5 +1,5 @@
 from django.urls import reverse
-from auth_app.models import profile  # Adjust the import if necessary
+from auth_app.models import profile 
 
 def account_context(request):
     first_name = None
@@ -17,3 +17,4 @@ def account_context(request):
         'log_reg_link': log_reg_link,
         'Profile': profile.objects.all()
     }
+    
