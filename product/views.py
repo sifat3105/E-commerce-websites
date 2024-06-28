@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Product, Category, SubCategory
 from .utils import convert_to_16_9
 from .forms import BannerForm, Banner2Form, DealForm, FeaturedBrandForm, ProductForm
+from django.contrib import messages
+
 
 
 
@@ -49,6 +51,7 @@ def banner2_create_view(request):
             form.save()
             return redirect('success')
     else:
+        messages.warning(request, 'not work')
         form = Banner2Form()
     return render(request, 'product/Create Views/create_banner2.html', {'form': form})
 
