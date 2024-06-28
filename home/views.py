@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect
-from auth_app.middlewares import not_verified_user
+from auth_app.middlewares import not_verified_user, verified_user
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from auth_app.models import profile
 from .models import *
+from product.models import *
 from django.contrib import messages
+from django.views.generic.list import ListView
+
 # from product.models import*
 
 User = get_user_model()
@@ -14,9 +17,19 @@ User = get_user_model()
 
 
 #****************** Create your views here**********************
-
 def home_view(request):
-    return render(request, 'home.html')
+    hero_sliders = HeroSlider.objects.all()
+    banners = Banner.objects.all()
+    banners_2 = Banner_2.objects.all()
+    deals = Deal.objects.all()
+    brands = FeaturedBrand.objects.all()
+    return render(request, 'home.html',{
+        'hero_sliders':hero_sliders,
+        'banners':banners,
+        'banners_2':banners_2,
+        'deals':deals,
+        'brands':brands,
+    })
 
 
 @not_verified_user
@@ -75,3 +88,4 @@ def shipping_update(request):
         return redirect('account')
         
     return render(request, 'profile.html')
+

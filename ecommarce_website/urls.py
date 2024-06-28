@@ -7,7 +7,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
     path('auth/', include('auth_app.urls')),
-    path('product/', include('product.urls'))
+    path('product/', include('product.urls')),
+    path('video/', include('video_views.urls')),
 ]
 
 if settings.DEBUG:

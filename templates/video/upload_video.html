@@ -1,0 +1,14 @@
+
+{% extends "base/base.html" %}{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Upload YouTube Video</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <input type="text" placeholder = "Enter your video link" name="youtube_url">Video Link</input>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+{% endblock content %}

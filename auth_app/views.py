@@ -33,13 +33,14 @@ def is_strong_password(password):
         elif char in special_characters:
             has_special = True
 
-        if has_upper and has_lower and has_digit and has_special:
+        # if has_upper and has_lower and has_digit and has_special:
+        if has_upper+has_digit+has_lower+has_special >=2:
             return True
 
     return False
 
 
-@verified_user
+
 def login_register_view(request):
     log_status = False
     reg_status = False
@@ -140,7 +141,6 @@ def verify(request, otp):
     return redirect('login_registration')
 
     
-@not_verified_user
 def details_update(request,id):
     data=User.objects.get(id=id)
     prof =profile.objects.get(user_id = id) 
@@ -180,7 +180,7 @@ def email_verifiation(request):
            
     return render (request, 'email_verifiation.html')
 
-@verified_user
+
 def new_password(request):
     if request.method == 'POST':
         otp = request.POST.get('otp')

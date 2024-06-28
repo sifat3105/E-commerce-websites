@@ -1,13 +1,10 @@
 {% load static %}
-{% load static custom_tags %}
-
 <!DOCTYPE html>
-
 <html class="no-js" lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title>Evara - eCommerce HTML Template</title>
+    <title>{% block tilte %}{% endblock tilte %}</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,12 +20,10 @@
     
 </head>
 
-<body>
-    <!-- Modal -->
-    {% block pop_up_offer %}
-    
-    {% endblock pop_up_offer %}
+{% block pop_up_offer %}
 
+
+{% endblock pop_up_offer%}
     <!-- Quick view -->
     <div class="modal fade custom-modal" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -197,6 +192,9 @@
                                     </ul>
                                 </li>
                                 <li><i class="fi-rs-user"></i><a href="{{ log_reg_link }}">{{ log_reg }}</a></li>
+                                {% if creation_dashboard %}
+                                <li><i class="fi-rs-user"></i><a href="{{ creation_dashboard_link }}">{{ creation_dashboard }}</a></li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
@@ -207,7 +205,7 @@
             <div class="container">
                 <div class="header-wrap">
                     <div class="logo logo-width-1">
-                        <a href="index.html"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo"></a>
+                        <a href="{% url 'home' %}"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo"></a>
                     </div>
                     <div class="header-right">
                         <div class="search-style-2">
@@ -289,17 +287,191 @@
             <div class="container">
                 <div class="header-wrap header-space-between position-relative">
                     <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="index.html"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo"></a>
+                        <a href="{% url 'home' %}"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo"></a>
                     </div>
-                    {% comment %}  {% endcomment %}
                     <div class="header-nav d-none d-lg-flex">
-                        {% load_categories %}
+                        <div class="main-categori-wrap d-none d-lg-block">
+                            <a class="categori-button-active" href="#">
+                                <span class="fi-rs-apps"></span> Browse Categories
+                            </a>
+                            <div class="categori-dropdown-wrap categori-dropdown-active-large">
+                                <ul>
+                                    {% for category in categories %}
+                                    <li class="has-children">
+                                        <a href="shop-grid-right.html"><i class="evara-font-dress"></i>{{category.name}}</a>
+                                        <div class="dropdown-menu">
+                                            <ul class="mega-menu d-lg-flex">
+                                                <li class="mega-menu-col col-lg-7">
+                                                    <ul class="d-lg-flex">
+                                                        <li class="mega-menu-col col-lg-6">
+                                                            <ul>
+                                                                <li><span class="submenu-title">Hot & Trending</span></li>
+                                                                {% for subcategory in category.subcategories.all %}
+                                                                {% comment %} {% if subcategory.id < = 5 %} {% endcomment %}
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">{{subcategory.name}}</a></li>
+                                                                {% endfor %}
+                                                               
+                                                            </ul>
+                                                        </li>
+                                                        <li class="mega-menu-col col-lg-6">
+                                                            <ul>
+                                                                <li><span class="submenu-title">Bottoms</span></li>
+                                                                {% comment %} {% else %}
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Leggings</a></li>
+                                                                {% endif %} {% endcomment %}
+                                                                
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="mega-menu-col col-lg-5">
+                                                    <div class="header-banner2">
+                                                        <img src="{% static 'assets/imgs/banner/menu-banner-2.jpg' %}" alt="menu_banner1">
+                                                        <div class="banne_info">
+                                                            <h6>10% Off</h6>
+                                                            <h4>New Arrival</h4>
+                                                            <a href="#">Shop now</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="header-banner2">
+                                                        <img src="{% static 'assets/imgs/banner/menu-banner-3.jpg' %}" alt="menu_banner2">
+                                                        <div class="banne_info">
+                                                            <h6>15% Off</h6>
+                                                            <h4>Hot Deals</h4>
+                                                            <a href="#">Shop now</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                    <li class="has-children">
+                                        <a href="shop-grid-right.html"><i class="evara-font-tshirt"></i>Men's Clothing</a>
+                                        <div class="dropdown-menu">
+                                            <ul class="mega-menu d-lg-flex">
+                                                <li class="mega-menu-col col-lg-7">
+                                                    <ul class="d-lg-flex">
+                                                        <li class="mega-menu-col col-lg-6">
+                                                            <ul>
+                                                                <li><span class="submenu-title">Jackets & Coats</span></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Down Jackets</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Jackets</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Parkas</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Faux Leather Coats</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Trench</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Wool & Blends</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Vests & Waistcoats</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Leather Coats</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="mega-menu-col col-lg-6">
+                                                            <ul>
+                                                                <li><span class="submenu-title">Suits & Blazers</span></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Blazers</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Suit Jackets</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Suit Pants</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Suits</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Vests</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Tailor-made Suits</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Cover-Ups</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="mega-menu-col col-lg-5">
+                                                    <div class="header-banner2">
+                                                        <img src="{% static 'assets/imgs/banner/menu-banner-4.jpg' %}" alt="menu_banner1">
+                                                        <div class="banne_info">
+                                                            <h6>10% Off</h6>
+                                                            <h4>New Arrival</h4>
+                                                            <a href="#">Shop now</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="has-children">
+                                        <a href="shop-grid-right.html"><i class="evara-font-smartphone"></i> Cellphones</a>
+                                        <div class="dropdown-menu">
+                                            <ul class="mega-menu d-lg-flex">
+                                                <li class="mega-menu-col col-lg-7">
+                                                    <ul class="d-lg-flex">
+                                                        <li class="mega-menu-col col-lg-6">
+                                                            <ul>
+                                                                <li><span class="submenu-title">Hot & Trending</span></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Cellphones</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">iPhones</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Refurbished Phones</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Mobile Phone</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Mobile Phone Parts</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Phone Bags & Cases</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Communication Equipments</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Walkie Talkie</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="mega-menu-col col-lg-6">
+                                                            <ul>
+                                                                <li><span class="submenu-title">Accessories</span></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Screen Protectors</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Wire Chargers</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Wireless Chargers</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Car Chargers</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Power Bank</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Armbands</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Dust Plug</a></li>
+                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Signal Boosters</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="mega-menu-col col-lg-5">
+                                                    <div class="header-banner2">
+                                                        <img src="{% static 'assets/imgs/banner/menu-banner-5.jpg' %}" alt="menu_banner1">
+                                                        <div class="banne_info">
+                                                            <h6>10% Off</h6>
+                                                            <h4>New Arrival</h4>
+                                                            <a href="#">Shop now</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="header-banner2">
+                                                        <img src="{% static 'assets/imgs/banner/menu-banner-6.jpg' %}" alt="menu_banner2">
+                                                        <div class="banne_info">
+                                                            <h6>15% Off</h6>
+                                                            <h4>Hot Deals</h4>
+                                                            <a href="#">Shop now</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li><a href="shop-grid-right.html"><i class="evara-font-desktop"></i>Computer & Office</a></li>
+                                    <li><a href="shop-grid-right.html"><i class="evara-font-cpu"></i>Consumer Electronics</a></li>
+                                    <li><a href="shop-grid-right.html"><i class="evara-font-diamond"></i>Jewelry & Accessories</a></li>
+                                    <li><a href="shop-grid-right.html"><i class="evara-font-home"></i>Home & Garden</a></li>
+                                    <li><a href="shop-grid-right.html"><i class="evara-font-high-heels"></i>Shoes</a></li>
+                                    <li><a href="shop-grid-right.html"><i class="evara-font-teddy-bear"></i>Mother & Kids</a></li>
+                                    <li><a href="shop-grid-right.html"><i class="evara-font-kite"></i>Outdoor fun</a></li>
+                                    <li>
+                                        <ul class="more_slide_open" style="display: none;">
+                                            <li><a href="shop-grid-right.html"><i class="evara-font-desktop"></i>Beauty, Health</a></li>
+                                            <li><a href="shop-grid-right.html"><i class="evara-font-cpu"></i>Bags and Shoes</a></li>
+                                            <li><a href="shop-grid-right.html"><i class="evara-font-diamond"></i>Consumer Electronics</a></li>
+                                            <li><a href="shop-grid-right.html"><i class="evara-font-home"></i>Automobiles & Motorcycles</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <div class="more_categories">Show more...</div>
+                            </div>
+                        </div>
                         <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                             <nav>
                                 <ul>
-                                    <li><a class="active" href="index.html">Home <i class="fi-rs-angle-down"></i></a>
+                                    <li><a class="active" href="{% url 'home' %}">Home <i class="fi-rs-angle-down"></i></a>
                                         <ul class="sub-menu">
-                                            <li><a href="index.html">Home 1</a></li>
+                                            <li><a href="{% url 'home' %}">Home 1</a></li>
                                             <li><a href="index-2.html">Home 2</a></li>
                                             <li><a href="index-3.html">Home 3</a></li>
                                             <li><a href="index-4.html">Home 4</a></li>
@@ -420,7 +592,6 @@
                             </nav>
                         </div>
                     </div>
-{% comment %}________________________________________________________________________________________________{% endcomment %}
                     <div class="hotline d-none d-lg-block">
                         <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
                     </div>
@@ -493,7 +664,7 @@
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
                 <div class="mobile-header-logo">
-                    <a href="index.html"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo"></a>
+                    <a href="{% url 'home' %}"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo"></a>
                 </div>
                 <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
                     <button class="close-style search-close">
@@ -531,9 +702,9 @@
                     <!-- mobile menu start -->
                     <nav>
                         <ul class="mobile-menu">
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="index.html">Home</a>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="{% url 'home' %}">Home</a>
                                 <ul class="dropdown">
-                                    <li><a href="index.html">Home 1</a></li>
+                                    <li><a href="{% url 'home' %}">Home 1</a></li>
                                     <li><a href="index-2.html">Home 2</a></li>
                                     <li><a href="index-3.html">Home 3</a></li>
                                     <li><a href="index-4.html">Home 4</a></li>
@@ -632,7 +803,7 @@
                         <a  href="page-contact.html"> Our location </a>
                     </div>
                     <div class="single-mobile-header-info">
-                        <a href="{{ log_reg_link }}">{{ log_reg }} </a>
+                        <a href="page-login-register.html">Log In / Sign Up </a>
                     </div>
                     <div class="single-mobile-header-info">
                         <a href="#">(+01) - 2345 - 6789 </a>
@@ -649,10 +820,16 @@
             </div>
         </div>
     </div>
+    <br>
+    <main class="main">     
     {% block content %}
     
+
     {% endblock content %}
-    
+    </main>
+    <br>
+    <br>
+    <br>
     <footer class="main">
         <section class="newsletter p-30 text-white wow fadeIn animated">
             <div class="container">
@@ -685,7 +862,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="widget-about font-md mb-md-5 mb-lg-0">
                             <div class="logo logo-width-1 wow fadeIn animated">
-                                <a href="index.html"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo"></a>
+                                <a href="{% url 'home' %}"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo"></a>
                             </div>
                             <h5 class="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated">Contact</h5>
                             <p class="wow fadeIn animated">
@@ -801,8 +978,8 @@
     <script src="{% static 'assets/js/plugins/jquery.theia.sticky.js' %}"></script>
     <script src="{% static 'assets/js/plugins/jquery.elevatezoom.js' %}"></script>
     <!-- Template  JS -->
-    <script src="{% static 'assets/js/main.js' %}"></script>
-    <script src="{% static 'assets/js/shop.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}?v=3.4"></script>
+    <script src="{% static 'assets/js/shop.js' %}?v=3.4"></script>
 
    
 </body>
